@@ -1,0 +1,37 @@
+#ifndef FRAMEDUINO_HARDWARE_PIN_H
+#define FRAMEDUINO_HARDWARE_PIN_H
+
+namespace Frameduino::HAL {
+
+    enum pin_capability_t
+    {
+        PIN_CAP_OUTPUT  = BIT(0),
+        PIN_CAP_INPUT   = BIT(1),
+        PIN_CAP_PWM     = BIT(2),
+        PIN_CAP_RESET   = BIT(3),
+        PIN_CAP_AREF    = BIT(4),
+        PIN_CAP_TIMER   = BIT(5),
+        PIN_CAP_UART    = BIT(6),
+        PIN_CAP_SPI     = BIT(7),
+        PIN_CAP_I2C     = BIT(8),
+        PIN_CAP_ADC     = BIT(9),
+        PIN_CAP_DAC     = BIT(10),
+        PIN_CAP_INT     = BIT(11),
+        PIN_CAP_PCINT   = BIT(11),
+
+        PIN_CAP_IO = PIN_CAP_INPUT | PIN_CAP_OUTPUT,
+        PIN_CAP_INTERRUPTS = PIN_CAP_INT | PIN_CAP_PCINT,
+    };
+
+    struct hardware_pin_t
+    {
+        uint16_t pin_number;
+        uint8_t port;
+        uint8_t pin;
+        uint32_t capabilities;
+
+        constexpr HardwarePin(uint16_t number, uint8_t port, uint8_t pin, uint32_t caps) : pin_number(number), port(port), pin(pin), capabilities(caps) {}
+    };
+    
+}
+#endif
