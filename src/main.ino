@@ -4,17 +4,33 @@
 
 using namespace Frameduino;
 
-hal_pin_info_t
+pin_info_t pin;
+pin_info_t pin2;
 
 void setup()
 {
   Serial.begin(9600);
-  hal_pin_attach(13, PIN_CONFIG_DIGITAL_OUTPUT);
-  hal_pin_detach(13);
+  hal_pin_attach(3, PIN_CONFIG_DIGITAL_OUTPUT, &pin);
+  //hal_pin_attach(9, PIN_CONFIG_DIGITAL_OUTPUT, &pin2);
+
+  hal_set_timer_interrupt(2, 10000);
+  //hal_set_timer_interrupt(&pin2, 6000);
+
+  Serial.println("Done");
 }
 
 void loop()
 {
-  pin.Set(true);
-  pin.Set(false);
+
+}
+
+
+ISR(TIMER2_COMPA_vect)
+{
+  hal_pin_toggle(pin);
+}
+
+ISR(TIMER1_COMPA_vect)
+{
+  hal_pin_toggle(pin2);
 }

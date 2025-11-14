@@ -1,9 +1,12 @@
 #ifndef FRAMEDUINO_HARDWARE_PIN_H
 #define FRAMEDUINO_HARDWARE_PIN_H
 
+#include <stdint.h>
+#include "operators.h"
+
 namespace Frameduino::HAL {
 
-    enum pin_capability_t
+    enum pin_capability_t : uint16_t
     {
         PIN_CAP_OUTPUT  = BIT(0),
         PIN_CAP_INPUT   = BIT(1),
@@ -30,7 +33,16 @@ namespace Frameduino::HAL {
         uint8_t pin;
         uint32_t capabilities;
 
-        constexpr HardwarePin(uint16_t number, uint8_t port, uint8_t pin, uint32_t caps) : pin_number(number), port(port), pin(pin), capabilities(caps) {}
+        constexpr hardware_pin_t(uint16_t number, uint8_t port, uint8_t pin, uint32_t caps) : pin_number(number), port(port), pin(pin), capabilities(caps) {}
+    };
+
+    struct hardware_pwm_t {
+        uint16_t pin_number;
+        uint8_t timer;
+        uint8_t channel;
+        uint8_t scalar;
+
+        constexpr hardware_pwm_t(uint16_t number, uint8_t timer, uint8_t channel, uint8_t scalar) : pin_number(number), timer(timer), channel(channel), scalar(scalar) {}
     };
     
 }
