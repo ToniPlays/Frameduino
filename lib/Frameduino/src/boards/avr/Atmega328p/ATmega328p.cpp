@@ -200,6 +200,26 @@ namespace Frameduino::HAL
     {
         switch (timer)
         {
+        case 1:
+        {
+            constexpr uint16_t prescalers[] = {1, 8, 64, 256, 1024};
+            constexpr uint8_t cs_bits[] = {0b001, 0b010, 0b011, 0b100, 0b101};
+
+            timer_config_t config = timer_compute_ocr(frequency, prescalers, cs_bits, 5, 16);
+            TCCR1A = 0;
+            TCNT1 = 0;
+            OCR1A = config.ocr_value; // compare value for interrupt
+
+            TCCR1B = (1 << WGM12);    // CTC mode
+            TCCR1B |= config.cs_bits; // set prescaler
+
+            TIMSK1 |= BIT(OCIE1A); // enable interrupt
+
+            Serial.println(config.cs_bits);
+            Serial.println(config.ocr_value);
+
+            return true;
+        }
         case 2:
         {
             constexpr uint16_t prescalers[] = {1, 8, 32, 64, 128, 256, 1024};
@@ -212,9 +232,9 @@ namespace Frameduino::HAL
             TCNT2 = 0;
             OCR2A = config.ocr_value; // compare value for interrupt
 
-            TCCR2A = (TCCR2A & ~((1 << WGM21) | (1 << WGM20))) | (1 << WGM21); // CTC mode
-            TCCR2B = (TCCR2B & ~0b111) | config.cs_bits;                            // set prescaler
-            TIMSK2 |= BIT(OCIE2A);                                             // enable interrupt
+            TCCR2A = (1 << WGM21);   // CTC mode
+            TCCR2B = config.cs_bits; // set prescaler
+            TIMSK2 |= BIT(OCIE2A);   // enable interrupt
 
             return true;
         }

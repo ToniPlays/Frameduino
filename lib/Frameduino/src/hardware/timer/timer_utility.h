@@ -52,27 +52,28 @@ namespace Frameduino::HAL
     struct timer_config_t
     {
         uint32_t actual_freq; // closest achievable frequency
-        uint8_t ocr_value;    // OCR2A/B value
+        uint16_t ocr_value;   // OCR2A/B value
         uint8_t cs_bits;      // prescaler bits for TCCR2B
     };
 
     timer_config_t timer_compute_ocr(uint32_t requested_freq,
-                                        const uint16_t prescalers[],
-                                        const uint8_t bits[],
-                                        size_t n, uint8_t resolution)
+                                     const uint16_t prescalers[],
+                                     const uint8_t bits[],
+                                     size_t n,
+                                     uint8_t resolution)
     {
         timer_config_t result = {0, 0, 0};
         uint32_t best_error = 0xFFFFFFFF;
-        uint32_t limit = (1 << (uint32_t)resolution) - 1;
+        uint32_t limit = (1UL << resolution) - 1;
 
         for (size_t i = 0; i < n; i++)
         {
-            // Calculate OCR assuming CTC mode: F_CPU / (prescaler * (OCR+1)) = frequency
-            uint32_t ocr = F_CPU / (prescalers[i] * requested_freq) - 1;
+            uint64_t ocr64 = ((uint64_t)F_CPU) / (prescalers[i] * (uint64_t)requested_freq) - 1;
 
-            if (ocr > limit)
-                continue; // 8-bit timer, skip if OCR doesn't fit
+            if (ocr64 > limit)
+                continue; // Doesn't fit, try next prescaler
 
+            uint32_t ocr = (uint32_t)ocr64;
             uint32_t actual = F_CPU / (prescalers[i] * (ocr + 1));
             uint32_t error = (actual > requested_freq) ? actual - requested_freq : requested_freq - actual;
 

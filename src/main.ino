@@ -11,10 +11,10 @@ void setup()
 {
   Serial.begin(9600);
   hal_pin_attach(3, PIN_CONFIG_DIGITAL_OUTPUT, &pin);
-  //hal_pin_attach(9, PIN_CONFIG_DIGITAL_OUTPUT, &pin2);
+  hal_pin_attach(9, PIN_CONFIG_DIGITAL_OUTPUT, &pin2);
 
-  hal_set_timer_interrupt(2, 10000);
-  //hal_set_timer_interrupt(&pin2, 6000);
+  hal_set_timer_interrupt(1, 100000);
+  //hal_set_timer_interrupt(2, 1000);
 
   Serial.println("Done");
 }
