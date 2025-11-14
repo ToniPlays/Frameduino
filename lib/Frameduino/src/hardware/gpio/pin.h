@@ -2,11 +2,10 @@
 #define FRAMEDUINO_PIN_H
 
 #include <stdint.h>
-#include "hardware/register_util.h"
+#include <Arduino.h>
+
 #include "operators.h"
 #include "hardware_pin.h"
-
-#include <Arduino.h>
 
 namespace Frameduino
 {
@@ -19,25 +18,34 @@ namespace Frameduino
         PIN_CONFIG_PWM = BIT(4),
     };
 
+    enum pin_interrupt : uint8_t
+    {
+        PIN_INTERRUPT_RISING = BIT(0),
+        PIN_INTERRUPT_FALLING = BIT(1),
+        PIN_INTERRUPT_CHANGE = PIN_INTERRUPT_RISING | PIN_INTERRUPT_FALLING
+    };
+
     struct pin_info_t
     {
-        uint16_t pin_number;
-        volatile uint8_t *port;
+        uint8_t pin_number;
+        volatile uint8_t* port;
         uint8_t mask; // Port pin mask
-        uint8_t usage;
     };
 
     bool hal_pin_attach(uint8_t pin, uint8_t usage, pin_info_t *info);
     bool hal_pin_detach(pin_info_t info);
 
-    inline void hal_pin_write(pin_info_t info, bool value)
+    inline bool hal_pin_attach_interrupt(pin_info_t* pin, uint8_t mask, void(* cb)(void*), void* data = nullptr) { return false; }
+    inline bool hal_pin_detach_interrupt(pin_info_t* pin, uint8_t mask) { return false; }
+
+    inline void hal_pin_write(pin_info_t* info, bool value)
     {
-        HAL::port_bit_write(info.port, info.mask, value);
+        HAL::port_bit_write(info->port, info->mask, value);
     }
 
-    inline void hal_pin_toggle(pin_info_t info)
+    inline void hal_pin_toggle(pin_info_t* info)
     {
-        *info.port ^= info.mask;
+        *info->port ^= info->mask;
     }
     inline void hal_pin_pulse(pin_info_t info, uint32_t duration, bool state = true)
     {
@@ -46,9 +54,9 @@ namespace Frameduino
         HAL::port_bit_write(info.port, info.mask, !state);
     }
 
-    inline bool hal_pwm_write(pin_info_t info, uint16_t value)
+    inline bool hal_pwm_write(pin_info_t* info, uint16_t value)
     {
-        return HAL::pwm_write(&info, value);
+        return HAL::pwm_write(info, value);
     }
 
     inline bool pin_supports_usage(uint8_t caps, uint8_t usage)

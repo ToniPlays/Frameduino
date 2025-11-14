@@ -57,8 +57,8 @@ namespace Frameduino::HAL
     };
 
     timer_config_t timer_compute_ocr(uint32_t requested_freq,
-                                     const uint16_t prescalers[],
-                                     const uint8_t bits[],
+                                     const uint16_t* prescalers,
+                                     const uint8_t* bits,
                                      size_t n,
                                      uint8_t resolution)
     {

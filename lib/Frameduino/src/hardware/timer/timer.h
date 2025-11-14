@@ -2,7 +2,6 @@
 #define FRAMEDUINO_TIMER_H
 
 #include "hardware/gpio/hardware_pin.h"
-#include "hardware/register_util.h"
 
 namespace Frameduino
 {
@@ -19,9 +18,9 @@ namespace Frameduino
 
     inline bool hal_timer_set_frequency(pin_info_t *pin, uint32_t frequency)
     {
-        const HAL::hardware_pwm_t* pwm = HAL::get_hardware_pwm_from_pin(pin);
-        if(!pwm) return false;
-        return HAL::timer_set_frequency(pwm->timer, frequency);
+        HAL::hardware_pwm_t pwm = HAL::get_hardware_pwm_from_pin(pin);
+        if(pwm.channel == -1) return false;
+        return HAL::timer_set_frequency(pwm.timer, frequency);
     }
     inline bool hal_timer_set_resolution(pin_info_t *pin, uint8_t bits)
     {

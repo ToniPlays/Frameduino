@@ -1,22 +1,25 @@
 #include "Frameduino.h"
 
-#include <Arduino.h>
-
 using namespace Frameduino;
 
 pin_info_t pin;
-pin_info_t pin2;
+pin_info_t ledPin;
+
+void on_interrupt_test(void* data)
+{
+  hal_pin_toggle(&ledPin);
+}
 
 void setup()
 {
   Serial.begin(9600);
-  hal_pin_attach(3, PIN_CONFIG_DIGITAL_OUTPUT, &pin);
-  hal_pin_attach(9, PIN_CONFIG_DIGITAL_OUTPUT, &pin2);
 
-  hal_set_timer_interrupt(1, 100000);
-  //hal_set_timer_interrupt(2, 1000);
+  hal_pin_attach(9, PIN_CONFIG_DIGITAL_OUTPUT, &pin);
+  hal_pin_attach(13, PIN_CONFIG_DIGITAL_OUTPUT, &ledPin);
 
-  Serial.println("Done");
+  hal_set_timer_interrupt(2, 60);
+  
+  hal_pin_attach_interrupt(&pin, PIN_INTERRUPT_RISING, on_interrupt_test);
 }
 
 void loop()
@@ -27,10 +30,7 @@ void loop()
 
 ISR(TIMER2_COMPA_vect)
 {
-  hal_pin_toggle(pin);
-}
-
-ISR(TIMER1_COMPA_vect)
-{
-  hal_pin_toggle(pin2);
+  Serial.println("Oof");
+  hal_system_tick();
+  hal_pin_toggle(&ledPin);
 }

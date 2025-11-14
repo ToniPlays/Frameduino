@@ -3,7 +3,6 @@
 #include "hardware/gpio/pin.h"
 #include "hardware/timer/timer_utility.h"
 #include "avr/io.h"
-#include <Arduino.h>
 
 #define PORT_B BIT(0)
 #define PORT_C BIT(1)
@@ -21,7 +20,7 @@
 
 namespace Frameduino::HAL
 {
-    constexpr hardware_pin_t pin_map[] = {
+    constexpr hardware_pin_t pin_map[] PROGMEM = {
         {0, PORT_D, PD0, PIN_CAP_IO | PIN_CAP_UART | PIN_CAP_PCINT},
         {1, PORT_D, PD1, PIN_CAP_IO | PIN_CAP_UART | PIN_CAP_PCINT},
         {2, PORT_D, PD2, PIN_CAP_IO | PIN_CAP_INTERRUPTS},
@@ -46,7 +45,7 @@ namespace Frameduino::HAL
         {19, PORT_C, PC5, PIN_CAP_IO | PIN_CAP_PCINT | PIN_CAP_I2C | PIN_CAP_ADC},
     };
 
-    constexpr hardware_pwm_t pwm_pin_map[] = {
+    constexpr hardware_pwm_t pwm_pin_map[] PROGMEM = {
         {6, TIMER_0, TIMER_CHANNEL_A, 8},
         {5, TIMER_0, TIMER_CHANNEL_B, 8},
         {9, TIMER_1, TIMER_CHANNEL_A, 0},
@@ -87,25 +86,37 @@ namespace Frameduino::HAL
             return &DDRC;
         else if (port == &PORTD)
             return &DDRD;
-        else
-            return nullptr;
+        return nullptr;
     }
 
-    const hardware_pin_t *get_hardware_pin_from_pin(uint8_t pin)
+    const hardware_pin_t get_hardware_pin_from_pin(uint8_t pin)
     {
+        hardware_pin_t tmp = {}; // temporary RAM copy
         for (uint8_t i = 0; i < ARRAY_SIZE(pin_map); i++)
-            if (pin_map[i].pin_number == pin)
-                return &pin_map[i];
-
-        return nullptr;
+        {
+            memcpy_P(&tmp, &pin_map[i], sizeof(hardware_pin_t));
+            if (tmp.pin_number == pin)
+            {
+                memcpy(&tmp, &tmp, sizeof(hardware_pin_t));
+                return tmp;
+            }
+        }
+        return tmp;
     }
 
-    const hardware_pwm_t *get_hardware_pwm_from_pin(pin_info_t *pin)
+    const hardware_pwm_t get_hardware_pwm_from_pin(pin_info_t *pin)
     {
-        for (uint8_t i = 0; i < ARRAY_SIZE(pwm_pin_map); i++)
-            if (pwm_pin_map[i].pin_number == pin->pin_number)
-                return &pwm_pin_map[i];
-        return nullptr;
+        hardware_pwm_t tmp = {}; // temporary RAM copy
+        for (uint8_t i = 0; i < ARRAY_SIZE(pin_map); i++)
+        {
+            memcpy_P(&tmp, &pwm_pin_map[i], sizeof(hardware_pwm_t));
+            if (tmp.pin_number == pin->pin_number)
+            {
+                memcpy(&tmp, &tmp, sizeof(hardware_pwm_t));
+                return tmp;
+            }
+        }
+        return tmp;
     }
 
     bool enable_timer(uint8_t timer)
@@ -215,9 +226,6 @@ namespace Frameduino::HAL
 
             TIMSK1 |= BIT(OCIE1A); // enable interrupt
 
-            Serial.println(config.cs_bits);
-            Serial.println(config.ocr_value);
-
             return true;
         }
         case 2:
@@ -247,15 +255,15 @@ namespace Frameduino::HAL
 
     bool pwm_write(pin_info_t *pin, uint16_t value)
     {
-        const hardware_pwm_t *pwm = get_hardware_pwm_from_pin(pin);
-        if (!pwm)
+        const hardware_pwm_t pwm = get_hardware_pwm_from_pin(pin);
+        if (pwm.channel == -1)
             return false;
 
-        uint16_t scaled = value >> pwm->scalar;
-        switch (pwm->timer)
+        uint16_t scaled = value >> pwm.scalar;
+        switch (pwm.timer)
         {
         case TIMER_0:
-            switch (pwm->channel)
+            switch (pwm.channel)
             {
             case TIMER_CHANNEL_A:
                 OCR0A = scaled;
@@ -266,7 +274,7 @@ namespace Frameduino::HAL
             }
             break;
         case TIMER_1:
-            switch (pwm->channel)
+            switch (pwm.channel)
             {
             case TIMER_CHANNEL_A:
                 OCR1A = scaled;
@@ -277,7 +285,7 @@ namespace Frameduino::HAL
             }
             break;
         case TIMER_2:
-            switch (pwm->channel)
+            switch (pwm.channel)
             {
             case TIMER_CHANNEL_A:
                 OCR2A = scaled;
