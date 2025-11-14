@@ -299,6 +299,91 @@ namespace Frameduino::HAL
 
         return true;
     }
+
+    bool attach_pin_interrupt(pin_info_t *pin)
+    {
+        const hardware_pin_t hw_pin = get_hardware_pin_from_pin(pin->pin_number);
+        switch (hw_pin.port)
+        {
+        case PORT_B:
+            PCICR |= BIT(PCIE0);
+            PCMSK0 |= pin->mask;
+            return true;
+        case PORT_C:
+            PCICR |= BIT(PCIE1);
+            PCMSK1 |= pin->mask;
+            return true;
+        case PORT_D:
+            PCICR |= BIT(PCIE2);
+            PCMSK2 |= pin->mask;
+            return true;
+        }
+        return false;
+    }
+    bool detach_pin_interrupt(pin_info_t *pin)
+    {
+        const hardware_pin_t hw_pin = get_hardware_pin_from_pin(pin->pin_number);
+        switch (hw_pin.port)
+        {
+        case PORT_B:
+            PCMSK0 = PCMSK0 & (~pin->mask);
+            return true;
+        case PORT_C:
+            PCMSK1 = PCMSK1 & (~pin->mask);
+            return true;
+        case PORT_D:
+            PCMSK2 = PCMSK2 & (~pin->mask);
+            return true;
+        }
+        return false;
+    }
+
+    inline int pcint_to_arduino_pin(uint8_t pcint_num)
+    {
+        if (pcint_num <= 7)
+            return 8 + pcint_num; // PORTB 0..7 → D8..D13
+        else if (pcint_num <= 14)
+            return 14 + (pcint_num - 8); // PORTC 0..6 → A0..A5
+        else if (pcint_num <= 23)
+            return pcint_num - 16; // PORTD 0..7 → D0..D7
+        return -1;                 // invalid
+    }
+
+    ISR(PCINT0_vect)
+    {
+        static uint8_t prev = 0;
+        uint8_t changed = (PINB ^ prev) & PCMSK0;
+
+        for (uint8_t bit = 0; bit < 8; bit++)
+            if (changed & (1 << bit))
+                system_on_pin_interrupt(PORT_B, pcint_to_arduino_pin(bit));
+
+        prev = PINB;
+    }
+
+    ISR(PCINT1_vect)
+    {
+        static uint8_t prev = 0;
+        uint8_t changed = (PINC ^ prev) & PCMSK1;
+
+        for (uint8_t bit = 0; bit < 8; bit++)
+            if (changed & (1 << bit))
+                system_on_pin_interrupt(PORT_C, pcint_to_arduino_pin(bit + 8));
+        prev = PINC;
+    }
+
+    ISR(PCINT2_vect)
+    {
+        static uint8_t prev = 0;
+        uint8_t changed = (PIND ^ prev) & PCMSK2;
+
+        for (uint8_t bit = 0; bit < 8; bit++)
+            if (changed & (1 << bit))
+                system_on_pin_interrupt(PORT_D, pcint_to_arduino_pin(bit + 16));
+
+        prev = PIND;
+    }
+
 }
 
 #endif

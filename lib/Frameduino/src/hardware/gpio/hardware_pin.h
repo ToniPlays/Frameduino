@@ -62,6 +62,9 @@ namespace Frameduino::HAL
     const hardware_pin_t get_hardware_pin_from_pin(uint8_t pin);
     const hardware_pwm_t get_hardware_pwm_from_pin(pin_info_t *pin);
 
+    bool attach_pin_interrupt(pin_info_t* pin);
+    bool detach_pin_interrupt(pin_info_t* pin);
+
     bool pwm_write(pin_info_t *pin, uint16_t value);
 
     inline void port_bit_write(volatile uint8_t *target, uint8_t mask, bool value)

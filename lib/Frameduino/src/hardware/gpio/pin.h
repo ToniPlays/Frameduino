@@ -6,6 +6,7 @@
 
 #include "operators.h"
 #include "hardware_pin.h"
+#include "hardware/system/hal_system.h"
 
 namespace Frameduino
 {
@@ -28,22 +29,32 @@ namespace Frameduino
     struct pin_info_t
     {
         uint8_t pin_number;
-        volatile uint8_t* port;
+        volatile uint8_t *port;
         uint8_t mask; // Port pin mask
     };
 
     bool hal_pin_attach(uint8_t pin, uint8_t usage, pin_info_t *info);
     bool hal_pin_detach(pin_info_t info);
 
-    inline bool hal_pin_attach_interrupt(pin_info_t* pin, uint8_t mask, void(* cb)(void*), void* data = nullptr) { return false; }
-    inline bool hal_pin_detach_interrupt(pin_info_t* pin, uint8_t mask) { return false; }
+    inline bool hal_pin_attach_interrupt(pin_info_t *pin, uint8_t mask, void (*cb)(void *), void *data = nullptr)
+    {
+        HAL::attach_pin_interrupt(pin);
+        HAL::hal_register_interrupt_callback(pin, cb, data);
+        return true;
+    }
+    inline bool hal_pin_detach_interrupt(pin_info_t *pin, uint8_t mask)
+    {
+        HAL::detach_pin_interrupt(pin);
+        HAL::hal_clear_interrupt_callback(pin);
+        return true;
+    }
 
-    inline void hal_pin_write(pin_info_t* info, bool value)
+    inline void hal_pin_write(pin_info_t *info, bool value)
     {
         HAL::port_bit_write(info->port, info->mask, value);
     }
 
-    inline void hal_pin_toggle(pin_info_t* info)
+    inline void hal_pin_toggle(pin_info_t *info)
     {
         *info->port ^= info->mask;
     }
@@ -54,7 +65,7 @@ namespace Frameduino
         HAL::port_bit_write(info.port, info.mask, !state);
     }
 
-    inline bool hal_pwm_write(pin_info_t* info, uint16_t value)
+    inline bool hal_pwm_write(pin_info_t *info, uint16_t value)
     {
         return HAL::pwm_write(info, value);
     }
