@@ -9,6 +9,12 @@ namespace Frameduino
 {
     struct pin_info_t;
 
+    struct hal_pulse_t
+    {
+        pin_info_t* pin;
+        unsigned long end_time;
+    };
+
     struct hal_system_interrupt_callback_t
     {
         uint8_t pin;
@@ -20,6 +26,7 @@ namespace Frameduino
     struct hal_system_info_t
     {
         hal_system_interrupt_callback_t *interrupt_head;
+        hal_pulse_t pulse_table[4];
     };
 
     inline hal_system_info_t *system_info = nullptr;
@@ -30,6 +37,9 @@ namespace Frameduino
         bool hal_clear_interrupt_callback(pin_info_t *pin);
 
         void system_on_pin_interrupt(uint8_t reg, uint8_t pin);
+        void system_register_pulse_on_pin(pin_info_t *pin, uint32_t expiration, bool end);
+
+        void system_pin_pulse_tick();
     }
 
     inline void hal_system_enable()
@@ -38,7 +48,10 @@ namespace Frameduino
         Serial.println("Hal enabled");
     }
 
-    inline void hal_system_tick() {}
+    inline void hal_system_tick() 
+    {
+        HAL::system_pin_pulse_tick();
+    }
 
 }
 

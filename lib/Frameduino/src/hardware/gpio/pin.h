@@ -42,7 +42,7 @@ namespace Frameduino
         HAL::hal_register_interrupt_callback(pin, cb, data);
         return true;
     }
-    inline bool hal_pin_detach_interrupt(pin_info_t *pin, uint8_t mask)
+    inline bool hal_pin_detach_interrupt(pin_info_t *pin)
     {
         HAL::detach_pin_interrupt(pin);
         HAL::hal_clear_interrupt_callback(pin);
@@ -58,11 +58,9 @@ namespace Frameduino
     {
         *info->port ^= info->mask;
     }
-    inline void hal_pin_pulse(pin_info_t info, uint32_t duration, bool state = true)
+    inline void hal_pin_pulse(pin_info_t* info, uint32_t duration, bool state = true)
     {
-        HAL::port_bit_write(info.port, info.mask, state);
-        delay(duration);
-        HAL::port_bit_write(info.port, info.mask, !state);
+        HAL::system_register_pulse_on_pin(info, duration, !state);
     }
 
     inline bool hal_pwm_write(pin_info_t *info, uint16_t value)

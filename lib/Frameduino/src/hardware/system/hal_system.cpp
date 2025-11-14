@@ -1,7 +1,6 @@
 #include "hal_system.h"
 #include "hardware/gpio/pin.h"
 
-
 namespace Frameduino::HAL
 {
     bool hal_register_interrupt_callback(pin_info_t *pin, void (*cb)(void *), void *user_data)
@@ -65,6 +64,35 @@ namespace Frameduino::HAL
             if (curr->pin == pin && curr->callback)
                 curr->callback(curr->user_data);
             curr = curr->next;
+        }
+    }
+
+    void system_register_pulse_on_pin(pin_info_t *pin, uint32_t expiration, bool end)
+    {
+        unsigned long now = millis();
+        HAL::port_bit_write(pin->port, pin->mask, !end);
+        for (int i = 0; i < 4; i++)
+        {
+            if (system_info->pulse_table[i].pin)
+                continue;
+
+            system_info->pulse_table[i].pin = pin;
+            system_info->pulse_table[i].end_time = now + expiration;
+
+            return;
+        }
+    }
+    void system_pin_pulse_tick()
+    {
+        unsigned long now = millis();
+
+        for (int i = 0; i < 4; i++)
+        {
+            if (system_info->pulse_table[i].pin && now >= system_info->pulse_table[i].end_time)
+            {
+                hal_pin_toggle(system_info->pulse_table[i].pin);
+                system_info->pulse_table[i].pin = nullptr;
+            }
         }
     }
 
