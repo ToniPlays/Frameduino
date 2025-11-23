@@ -22,6 +22,7 @@ namespace Frameduino::HAL
         entry->next = system_info->interrupt_head;
         system_info->interrupt_head = entry;
 
+        hal_logger_log_i(("Enabled interrupt on pin: " + String(pin->pin_number)).c_str());
         return true;
     }
 
@@ -44,6 +45,7 @@ namespace Frameduino::HAL
                     system_info->interrupt_head = curr->next;
 
                 free(curr);
+                hal_logger_log_i(("Removed interrupt on pin: " + String(pin->pin_number)).c_str());
                 return true;
             }
             prev = curr;
@@ -70,6 +72,7 @@ namespace Frameduino::HAL
     void system_register_pulse_on_pin(pin_info_t *pin, uint32_t expiration, bool end)
     {
         unsigned long now = millis();
+        hal_logger_log_i(("Pulsing pin: " + String(pin->pin_number)).c_str());
         HAL::port_bit_write(pin->port, pin->mask, !end);
         for (int i = 0; i < 4; i++)
         {

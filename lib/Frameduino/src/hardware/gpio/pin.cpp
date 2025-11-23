@@ -40,7 +40,7 @@ namespace Frameduino
         return true;
     }
 
-    bool hal_pin_detach(pin_info_t info)
+    bool hal_pin_detach(pin_info_t* info)
     {
         return false;
     }

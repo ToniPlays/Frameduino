@@ -6,7 +6,7 @@
 
 #include "operators.h"
 #include "hardware_pin.h"
-#include "hardware/system/hal_system.h"
+#include "system/core/hal_system.h"
 
 namespace Frameduino
 {
@@ -34,7 +34,7 @@ namespace Frameduino
     };
 
     bool hal_pin_attach(uint8_t pin, uint8_t usage, pin_info_t *info);
-    bool hal_pin_detach(pin_info_t info);
+    bool hal_pin_detach(pin_info_t* info);
 
     inline bool hal_pin_attach_interrupt(pin_info_t *pin, uint8_t mask, void (*cb)(void *), void *data = nullptr)
     {

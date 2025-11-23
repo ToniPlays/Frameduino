@@ -126,14 +126,17 @@ namespace Frameduino::HAL
         case TIMER_0:
             TCCR0A |= BIT(WGM01) | BIT(WGM00);
             TCCR0B |= BIT(CS00);
+            hal_logger_log_i("Enabled timer 0");
             break;
         case TIMER_1:
             TCCR1A |= BIT(WGM10);
             TCCR1B |= BIT(WGM12) | BIT(CS10);
+            hal_logger_log_i("Enabled timer 1");
             break;
         case TIMER_2:
             TCCR2A |= BIT(WGM21) | BIT(WGM20);
             TCCR2B |= BIT(CS20);
+            hal_logger_log_i("Enabled timer 2");
             break;
         default:
             return false;
@@ -225,7 +228,7 @@ namespace Frameduino::HAL
             TCCR1B |= config.cs_bits; // set prescaler
 
             TIMSK1 |= BIT(OCIE1A); // enable interrupt
-
+            hal_logger_log_i("Enabled timer interrupt 1");
             return true;
         }
         case 2:
@@ -244,6 +247,7 @@ namespace Frameduino::HAL
             TCCR2B = config.cs_bits; // set prescaler
             TIMSK2 |= BIT(OCIE2A);   // enable interrupt
 
+            hal_logger_log_i("Enabled timer interrupt 2");
             return true;
         }
         default:
