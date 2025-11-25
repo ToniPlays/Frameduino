@@ -11,6 +11,7 @@ namespace Frameduino
         virtual void log_w(const char *msg) = 0;
         virtual void log_err(const char *msg) = 0;
     };
+    
 }
 
 #endif

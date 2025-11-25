@@ -1,11 +1,12 @@
 #include "default_logger.h"
+#include "hardware/uart/hal_uart.h"
 #include <Arduino.h>
 
 namespace Frameduino
 {
     hal_default_logger_t::hal_default_logger_t()
     {
-        Serial.begin(57600);
+        hal_uart_enable(9600);
     }
 
     hal_default_logger_t::~hal_default_logger_t()

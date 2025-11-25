@@ -4,6 +4,7 @@
 #include "hardware/spi/spi_device.h"
 
 #include "system/core/hal_system.h"
+#include "system/core/energy.h"
 #include "system/logging/default_logger.h"
 
 #endif

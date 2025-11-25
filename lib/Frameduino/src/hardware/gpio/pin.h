@@ -7,6 +7,7 @@
 #include "operators.h"
 #include "hardware_pin.h"
 #include "system/core/hal_system.h"
+#include "boards/hal.h"
 
 namespace Frameduino
 {
@@ -33,8 +34,32 @@ namespace Frameduino
         uint8_t mask; // Port pin mask
     };
 
+    namespace HAL
+    {
+        inline void port_bit_write(volatile uint8_t *target, uint8_t mask, bool value)
+        {
+            *target = (*target & ~mask) | (value ? mask : 0);
+        }
+
+        inline bool port_bit_read(volatile uint8_t *reg, uint8_t mask)
+        {
+            return (*reg & mask) != 0;
+        }
+
+        inline bool port_bit_read_input(volatile uint8_t *target, uint8_t mask)
+        {
+            volatile uint8_t *pin_reg = get_input_register_for_port(target);
+            return (*pin_reg & mask) != 0; // read physical voltage
+        }
+    }
+
     bool hal_pin_attach(uint8_t pin, uint8_t usage, pin_info_t *info);
-    bool hal_pin_detach(pin_info_t* info);
+    bool hal_pin_detach(pin_info_t *info);
+
+    inline bool hal_adc_set_prescaler(uint8_t prescaler)
+    {
+        return HAL::adc_set_conversion_time_prescaler(prescaler);
+    }
 
     inline bool hal_pin_attach_interrupt(pin_info_t *pin, uint8_t mask, void (*cb)(void *), void *data = nullptr)
     {
@@ -58,7 +83,7 @@ namespace Frameduino
     {
         *info->port ^= info->mask;
     }
-    inline void hal_pin_pulse(pin_info_t* info, uint32_t duration, bool state = true)
+    inline void hal_pin_pulse(pin_info_t *info, uint32_t duration, bool state = true)
     {
         HAL::system_register_pulse_on_pin(info, duration, !state);
     }
