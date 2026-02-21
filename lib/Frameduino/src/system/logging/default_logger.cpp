@@ -4,13 +4,14 @@
 
 namespace Frameduino
 {
-    hal_default_logger_t::hal_default_logger_t()
+    hal_default_logger_t::hal_default_logger_t(uint32_t baud_rate) : hal_logger_t()
     {
-        hal_uart_enable(9600);
+        hal_uart_enable(baud_rate);
     }
 
     hal_default_logger_t::~hal_default_logger_t()
     {
+
     }
 
     void hal_default_logger_t::log_v(const char *msg)

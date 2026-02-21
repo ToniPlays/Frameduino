@@ -1,6 +1,8 @@
 #ifndef FRAMEDUINO_LOGGER_H
 #define FRAMEDUINO_LOGGER_H
 
+#include <stdint.h>
+
 namespace Frameduino
 {
     class hal_logger_t

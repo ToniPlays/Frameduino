@@ -8,7 +8,7 @@ namespace Frameduino
     class hal_default_logger_t : public hal_logger_t
     {
     public:
-        hal_default_logger_t();
+        hal_default_logger_t(uint32_t baud_rate = 9600);
         ~hal_default_logger_t();
 
         void log_v(const char *msg) override;
