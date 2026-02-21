@@ -4,10 +4,10 @@
 #include "boards/hal.h"
 #include "hal_system.h"
 
-#define SLEEP_MODE_REDUCED 0x00
-#define SLEEP_MODE_POWER_DOWN 0x01
-#define SLEEP_MODE_POWER_SAVE 0x02
-#define SLEEP_MODE_STANDBY 0x03
+#define FD_SLEEP_MODE_REDUCED 0x00
+#define FD_SLEEP_MODE_POWER_DOWN 0x01
+#define FD_SLEEP_MODE_POWER_SAVE 0x02
+#define FD_SLEEP_MODE_STANDBY 0x03
 
 namespace Frameduino
 {

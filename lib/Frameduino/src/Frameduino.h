@@ -7,4 +7,6 @@
 #include "system/core/energy.h"
 #include "system/logging/default_logger.h"
 
+#include "system/memory/eeprom.h"
+
 #endif

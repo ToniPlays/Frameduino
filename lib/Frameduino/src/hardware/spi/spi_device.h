@@ -57,8 +57,8 @@ namespace Frameduino
     }
     static void hal_spi_device_update(uint8_t cs)
     {
-        spi_device_t* device = HAL::hal_get_system_info()->devices.find([](hal_spi_device_t* d, void* user_data) { return d->pin == *(uint8_t*)user_data; }, &cs);
-        if(device) device->update();
+        hal_spi_device_t* device = HAL::hal_get_system_info()->devices.find([](hal_spi_device_t* d, void* user_data) { return d->pin == *(uint8_t*)user_data; }, &cs);
+        if(device) device->device->update();
     }
 }
 
