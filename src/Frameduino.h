@@ -5,6 +5,8 @@
 
 #include "system/core/hal_system.h"
 #include "system/core/energy.h"
+#include "system/core/utility.h"
+
 #include "system/logging/default_logger.h"
 
 #include "system/memory/eeprom.h"

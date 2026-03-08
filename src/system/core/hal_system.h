@@ -3,6 +3,7 @@
 
 #include <stdint.h>
 #include "../logging/default_logger.h"
+#include "boards/hal.h"
 #include "linked_list.h"
 #include <Arduino.h>
 
@@ -13,7 +14,7 @@ namespace Frameduino
     struct hal_pulse_t
     {
         pin_info_t *pin;
-        unsigned long end_time;
+        uint32_t end_time;
     };
 
     struct hal_system_interrupt_callback_t
@@ -36,12 +37,13 @@ namespace Frameduino
         linked_list<hal_system_interrupt_callback_t> interrupts;
         linked_list<hal_spi_device_t> devices;
         hal_pulse_t pulse_table[4];
-#ifdef FRAMEDUINO_DEBUG
-        hal_logger_t *logger;
-#endif
+        hal_logger_t *logger = nullptr;
     };
 
-    static hal_system_info_t *system_info = nullptr;
+    extern hal_system_info_t *system_info;
+
+    void hal_system_enable();
+    void hal_logger_log_err_internal(const char* msg);
 
     namespace HAL
     {
@@ -53,14 +55,19 @@ namespace Frameduino
 
         void system_pin_pulse_tick();
 
-        inline hal_system_info_t *hal_get_system_info() { return system_info; }
+        inline hal_system_info_t *hal_get_system_info()
+        {
+            if(!system_info) hal_logger_log_err_internal("Get nullptr system info");
+            return system_info;
+        }
     }
 
     void hal_logger_log_v(const char *msg);
 
     inline void hal_system_enable()
     {
-        system_info = new hal_system_info_t();
+        if (!system_info)
+            system_info = new hal_system_info_t();
     }
 
     inline void hal_system_tick()
@@ -70,39 +77,42 @@ namespace Frameduino
 
     inline void hal_logger_register(hal_logger_t *logger)
     {
-#ifdef FRAMEDUINO_DEBUG
+        hal_system_enable();
         system_info->logger = logger;
-#endif
     }
-
-    inline void hal_logger_log_v(const char *msg)
+    
+    inline void hal_logger_log_v_internal(const char* msg)
     {
-#ifdef FRAMEDUINO_DEBUG
         if (system_info->logger)
             system_info->logger->log_v(msg);
-#endif
     }
-    inline void hal_logger_log_i(const char *msg)
+    inline void hal_logger_log_i_internal(const char* msg)
     {
-#ifdef FRAMEDUINO_DEBUG
         if (system_info->logger)
             system_info->logger->log_i(msg);
-#endif
     }
-    inline void hal_logger_log_w(const char *msg)
+    inline void hal_logger_log_w_internal(const char* msg)
     {
-#ifdef FRAMEDUINO_DEBUG
         if (system_info->logger)
             system_info->logger->log_w(msg);
-#endif
     }
-    inline void hal_logger_log_err(const char *msg)
+    inline void hal_logger_log_err_internal(const char* msg)
     {
-#ifdef FRAMEDUINO_DEBUG
         if (system_info->logger)
             system_info->logger->log_err(msg);
-#endif
     }
+
+#ifdef FRAMEDUINO_DEBUG
+    #define hal_logger_log_v(x) hal_logger_log_v_internal(x)
+    #define hal_logger_log_i(x) hal_logger_log_i_internal(x)
+    #define hal_logger_log_w(x) hal_logger_log_w_internal(x)
+    #define hal_logger_log_err(x) hal_logger_log_err_internal(x)
+#else 
+    #define hal_logger_log_v(x)
+    #define hal_logger_log_i(x)
+    #define hal_logger_log_w(x)
+    #define hal_logger_log_err(x)
+#endif
 }
 
 #endif

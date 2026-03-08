@@ -5,6 +5,11 @@
 
 namespace Frameduino::HAL
 {
+    uint8_t get_clock_prescaler()
+    {
+        return CLKPR & 0x0F;
+    }
+
     bool set_clock_prescaler(uint8_t prescaler)
     {
         cli();

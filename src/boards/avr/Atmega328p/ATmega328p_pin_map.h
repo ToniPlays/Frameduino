@@ -1,5 +1,5 @@
 #ifndef AVR_ATMEGA328P_PIN_MAPPING
-#define AVR_ATMEGA328P_PIN_MAPPPING
+#define AVR_ATMEGA328P_PIN_MAPPING
 
 #define PORT_B BIT(0)
 #define PORT_C BIT(1)
@@ -25,7 +25,7 @@ namespace Frameduino::HAL
         {3, PORT_D, PD3, PIN_CAP_IO | PIN_CAP_PWM | PIN_CAP_TIMER | PIN_CAP_INTERRUPTS},
         {4, PORT_D, PD4, PIN_CAP_IO | PIN_CAP_TIMER | PIN_CAP_PCINT},
         {5, PORT_D, PD5, PIN_CAP_IO | PIN_CAP_TIMER | PIN_CAP_PWM | PIN_CAP_PCINT},
-        {6, PORT_D, PD5, PIN_CAP_IO | PIN_CAP_PWM | PIN_CAP_PCINT},
+        {6, PORT_D, PD6, PIN_CAP_IO | PIN_CAP_PWM | PIN_CAP_PCINT},
         {7, PORT_D, PD7, PIN_CAP_IO | PIN_CAP_PCINT},
 
         {8, PORT_B, PB0, PIN_CAP_IO | PIN_CAP_PCINT},
@@ -63,7 +63,7 @@ namespace Frameduino::HAL
         case PORT_D:
             return &PORTD;
         }
-        return 0x00;
+        return nullptr;
     }
     volatile uint8_t *get_input_register_for_port(volatile uint8_t *port)
     {
@@ -95,7 +95,6 @@ namespace Frameduino::HAL
             memcpy_P(&tmp, &pin_map[i], sizeof(hardware_pin_t));
             if (tmp.pin_number == pin)
             {
-                memcpy(&tmp, &tmp, sizeof(hardware_pin_t));
                 return tmp;
             }
         }
@@ -105,14 +104,11 @@ namespace Frameduino::HAL
     const hardware_pwm_t get_hardware_pwm_from_pin(pin_info_t *pin)
     {
         hardware_pwm_t tmp = {}; // temporary RAM copy
-        for (uint8_t i = 0; i < ARRAY_SIZE(pin_map); i++)
+        for (uint8_t i = 0; i < ARRAY_SIZE(pwm_pin_map); i++)
         {
             memcpy_P(&tmp, &pwm_pin_map[i], sizeof(hardware_pwm_t));
             if (tmp.pin_number == pin->pin_number)
-            {
-                memcpy(&tmp, &tmp, sizeof(hardware_pwm_t));
                 return tmp;
-            }
         }
         return tmp;
     }

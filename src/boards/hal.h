@@ -27,6 +27,7 @@ namespace Frameduino::HAL
     bool adc_enable();
     bool adc_set_conversion_time_prescaler(uint8_t prescaler);
 
+    uint8_t get_clock_prescaler();
     bool set_clock_prescaler(uint8_t prescaler);    //Ideally adjust all uart etc before switching
 
     void uart_begin(uint32_t baud, uint8_t config);

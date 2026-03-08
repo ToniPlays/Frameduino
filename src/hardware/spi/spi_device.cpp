@@ -15,11 +15,14 @@ namespace Frameduino
         hal_pin_detach(&cs_pin);
     }
 
-    void spi_device_t::transaction(void (*cb)(spi_device_t *, void *), void* user_data)
+    void spi_device_t::start_transaction()
     {
         hal_pin_write(&cs_pin, false);
         SPI.beginTransaction(SPISettings(400000, MSBFIRST, SPI_MODE0));
-        cb(this, user_data);
+    }
+
+    void spi_device_t::end_transaction()
+    {
         SPI.endTransaction();
         hal_pin_write(&cs_pin, true);
     }

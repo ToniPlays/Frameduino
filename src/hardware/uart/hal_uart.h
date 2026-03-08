@@ -7,7 +7,7 @@ namespace Frameduino
 {
     inline void hal_uart_enable(uint32_t baud)
     {
-        HAL::uart_begin(baud, 0x06);
+        HAL::uart_begin(baud, SERIAL_8N1);
     }
 }
 
