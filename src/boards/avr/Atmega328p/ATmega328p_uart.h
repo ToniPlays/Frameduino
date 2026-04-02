@@ -11,7 +11,7 @@ namespace Frameduino::HAL
         current_baud = baud;
         current_config = config;
 
-        uint32_t real_f_cpu = F_CPU >> (CLKPR & 0x0F);
+        uint32_t real_f_cpu = F_CPU >> get_clock_prescaler();
 
         // Disable UART while reconfiguring
         UCSR0B &= ~((1 << RXEN0) | (1 << TXEN0) | (1 << RXCIE0));

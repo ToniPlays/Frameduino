@@ -1,5 +1,5 @@
 #ifndef AVR_ATTINY1634_PIN_MAPPING
-#define AVR_ATTINY1634_PIN_MAPPPING
+#define AVR_ATTINY1634_PIN_MAPPING
 
 #define PORT_A BIT(0)
 #define PORT_B BIT(1)
@@ -57,7 +57,7 @@ namespace Frameduino::HAL
         case PORT_C:
             return &PORTC;
         }
-        return 0x00;
+        return nullptr;
     }
     volatile uint8_t *get_input_register_for_port(volatile uint8_t *port)
     {
@@ -88,10 +88,7 @@ namespace Frameduino::HAL
         {
             memcpy_P(&tmp, &pin_map[i], sizeof(hardware_pin_t));
             if (tmp.pin_number == pin)
-            {
-                memcpy(&tmp, &tmp, sizeof(hardware_pin_t));
                 return tmp;
-            }
         }
         return tmp;
     }
@@ -99,14 +96,11 @@ namespace Frameduino::HAL
     const hardware_pwm_t get_hardware_pwm_from_pin(pin_info_t *pin)
     {
         hardware_pwm_t tmp = {}; // temporary RAM copy
-        for (uint8_t i = 0; i < ARRAY_SIZE(pin_map); i++)
+        for (uint8_t i = 0; i < ARRAY_SIZE(pwm_pin_map); i++)
         {
             memcpy_P(&tmp, &pwm_pin_map[i], sizeof(hardware_pwm_t));
             if (tmp.pin_number == pin->pin_number)
-            {
-                memcpy(&tmp, &tmp, sizeof(hardware_pwm_t));
                 return tmp;
-            }
         }
         return tmp;
     }

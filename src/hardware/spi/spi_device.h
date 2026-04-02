@@ -17,7 +17,8 @@ namespace Frameduino
         bool transfer(uint8_t *bytes, uint8_t length);
         bool request(uint8_t *buffer, uint8_t length);
 
-        void transaction(void (*cb)(spi_device_t *, void *), void* user_data);
+        void start_transaction();
+        void end_transaction();
 
         pin_info_t* get_cs_pin() { return &cs_pin; }
         void set_cs_pin(pin_info_t* pin) { cs_pin = *pin; }
@@ -40,21 +41,21 @@ namespace Frameduino
             return;
         }
         #endif
-
-        pin_info_t pin;
+        pin_info_t pin = {};
         hal_pin_attach(cs, PIN_CONFIG_DIGITAL_OUTPUT, &pin);
         hal_pin_write(&pin, true);
         device->set_cs_pin(&pin);
         device->init();
-
+        
         hal_spi_device_t spi = {};
         spi.pin = cs;
         spi.device = device;
-
+        
         SPI.begin();
 
         HAL::hal_get_system_info()->devices.add(spi);
-        hal_logger_log_w(("Registered SPI device at pin " + String(cs)).c_str());
+        String csStr = String(cs);
+        hal_logger_log_w(("Registered SPI device at pin " + csStr).c_str());
     }
     static void hal_spi_device_update(uint8_t cs)
     {

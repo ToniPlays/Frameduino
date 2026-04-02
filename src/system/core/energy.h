@@ -11,11 +11,14 @@
 
 namespace Frameduino
 {
+    inline uint8_t hal_clock_prescaler()
+    {
+        return HAL::get_clock_prescaler();
+    }
+
     inline void hal_set_clock_prescaler(uint8_t prescaler)
     {
-        hal_logger_log_w(("Setting clock prescaler: " + String(prescaler)).c_str());
         HAL::set_clock_prescaler(prescaler);
-        
     }
 
     inline void hal_system_sleep(uint8_t mode)
