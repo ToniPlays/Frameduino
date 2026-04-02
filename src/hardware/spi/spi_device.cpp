@@ -4,8 +4,7 @@
 
 namespace Frameduino
 {
-
-    spi_device_t::spi_device_t()
+    spi_device_t::spi_device_t(uint32_t clockSpeed) : m_ClockSpeed(clockSpeed)
     {
         
     }
@@ -18,7 +17,7 @@ namespace Frameduino
     void spi_device_t::transaction(void (*cb)(spi_device_t *, void *), void* user_data)
     {
         hal_pin_write(&cs_pin, false);
-        SPI.beginTransaction(SPISettings(400000, MSBFIRST, SPI_MODE0));
+        SPI.beginTransaction(SPISettings(m_ClockSpeed, MSBFIRST, SPI_MODE0));
         cb(this, user_data);
         SPI.endTransaction();
         hal_pin_write(&cs_pin, true);
