@@ -11,7 +11,7 @@ namespace Frameduino
     class spi_device_t
     {
     public:
-        spi_device_t();
+        spi_device_t(uint32_t clockSpeed = 400000);
         ~spi_device_t();
 
         bool transfer(uint8_t *bytes, uint8_t length);
@@ -28,6 +28,7 @@ namespace Frameduino
 
     private:
         pin_info_t cs_pin;
+        uint32_t m_ClockSpeed;
     };
 
 

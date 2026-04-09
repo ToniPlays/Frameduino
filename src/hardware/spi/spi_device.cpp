@@ -4,8 +4,7 @@
 
 namespace Frameduino
 {
-
-    spi_device_t::spi_device_t()
+    spi_device_t::spi_device_t(uint32_t clockSpeed) : m_ClockSpeed(clockSpeed)
     {
         
     }
