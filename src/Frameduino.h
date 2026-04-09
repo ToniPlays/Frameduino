@@ -6,9 +6,11 @@
 #include "system/core/hal_system.h"
 #include "system/core/energy.h"
 #include "system/core/utility.h"
+#include "system/core/time.h"
 
 #include "system/logging/default_logger.h"
 
 #include "system/memory/eeprom.h"
+#include "system/memory/flash_string.h"
 
 #endif

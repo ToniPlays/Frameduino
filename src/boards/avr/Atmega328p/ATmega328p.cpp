@@ -8,6 +8,8 @@
 #include "ATmega328p_uart.h"
 #include "ATmega328p_energy.h"
 
+#include "system/memory/flash_string.h"
+
 namespace Frameduino::HAL
 {
     bool enable_timer(uint8_t timer)
@@ -105,21 +107,21 @@ namespace Frameduino::HAL
     {
         switch (timer)
         {
-        case 1:
+        case 0:
         {
             constexpr uint16_t prescalers[] = {1, 8, 64, 256, 1024};
             constexpr uint8_t cs_bits[] = {0b001, 0b010, 0b011, 0b100, 0b101};
 
             timer_config_t config = timer_compute_ocr(frequency, prescalers, cs_bits, 5, 16);
-            TCCR1A = 0;
-            TCNT1 = 0;
-            OCR1A = config.ocr_value; // compare value for interrupt
+            TCCR0A = 0;
+            TCNT0 = 0;
+            OCR0A = config.ocr_value; // compare value for interrupt
 
-            TCCR1B = (1 << WGM12);    // CTC mode
-            TCCR1B |= config.cs_bits; // set prescaler
+            TCCR0B = (1 << WGM02);    // CTC mode
+            TCCR0B |= config.cs_bits; // set prescaler
 
-            TIMSK1 |= BIT(OCIE1A); // enable interrupt
-            hal_logger_log_i("Enabled timer interrupt 1");
+            TIMSK0 |= BIT(OCIE0A); // enable interrupt
+            hal_logger_log_i(F_STR("Enabled timer interrupt 0", 25));
             return true;
         }
         case 2:
@@ -138,11 +140,30 @@ namespace Frameduino::HAL
             TCCR2B = config.cs_bits; // set prescaler
             TIMSK2 |= BIT(OCIE2A);   // enable interrupt
 
-            hal_logger_log_i("Enabled timer interrupt 2");
+            hal_logger_log_i(F_STR("Enabled timer interrupt 2", 25));
             return true;
         }
-        default:
-            return false; // Timer1 is 16-bit, use different method
+        case 1:
+        {
+            constexpr uint16_t prescalers[] = { 1, 8, 64, 256, 1024 };
+            constexpr uint8_t cs_bits[] = {0b001, 0b010, 0b011, 0b100, 0b101};
+
+            timer_config_t config = timer_compute_ocr(frequency, prescalers, cs_bits, 5, 16);
+
+            TCCR1A = 0;
+            TCCR1B = 0;
+            TCNT1 = 0;
+            OCR1A = config.ocr_value; // compare value for interrupt
+
+            TCCR1B = (1 << WGM12);   // CTC mode with OCR1A as TOP
+            TCCR1B |= config.cs_bits; // set prescaler
+            TIMSK1 |= BIT(OCIE1A);   // enable interrupt
+            
+            String str = String("Config: OCR1A=") + config.ocr_value + ", CS bits=" + config.cs_bits;
+
+            hal_logger_log_i(F_STR("Enabled timer interrupt 1", 25));
+            return true;
+        }
         }
 
         return false;

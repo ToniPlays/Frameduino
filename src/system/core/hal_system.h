@@ -5,6 +5,7 @@
 #include "../logging/default_logger.h"
 #include "boards/hal.h"
 #include "linked_list.h"
+#include "../memory/flash_string.h"
 #include <Arduino.h>
 
 namespace Frameduino
@@ -38,6 +39,8 @@ namespace Frameduino
         linked_list<hal_spi_device_t> devices;
         hal_pulse_t pulse_table[4];
         hal_logger_t *logger = nullptr;
+        uint64_t millis = 0;
+        uint64_t micros = 0;
     };
 
     extern hal_system_info_t *system_info;
@@ -57,7 +60,7 @@ namespace Frameduino
 
         inline hal_system_info_t *hal_get_system_info()
         {
-            if(!system_info) hal_logger_log_err_internal("Get nullptr system info");
+            if(!system_info) hal_logger_log_err_internal(F_STR("Get nullptr system info", 23));
             return system_info;
         }
     }
