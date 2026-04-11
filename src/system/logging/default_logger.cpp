@@ -20,10 +20,22 @@ namespace Frameduino
         Serial.println(msg);
         Serial.flush();
     }
+    void hal_default_logger_t::log_v(const String& msg)
+    {
+        Serial.print(F("[V]: "));
+        Serial.println(msg.c_str());
+        Serial.flush();
+    }
     void hal_default_logger_t::log_i(const char* msg)
     {
         Serial.print(F("[I]: "));
         Serial.println(msg);
+        Serial.flush();
+    }
+    void hal_default_logger_t::log_i(const String& msg)
+    {
+        Serial.print(F("[I]: "));
+        Serial.println(msg.c_str());
         Serial.flush();
     }
     void hal_default_logger_t::log_w(const char* msg)
@@ -32,10 +44,22 @@ namespace Frameduino
         Serial.println(msg);
         Serial.flush();
     }
+    void hal_default_logger_t::log_w(const String& msg)
+    {
+        Serial.print(F("[W]: "));
+        Serial.println(msg.c_str());
+        Serial.flush();
+    }
     void hal_default_logger_t::log_err(const char* msg)
     {
         Serial.print(F("[E]: "));
         Serial.println(msg);
+        Serial.flush();
+    }
+    void hal_default_logger_t::log_err(const String& msg)
+    {
+        Serial.print(F("[E]: "));
+        Serial.println(msg.c_str());
         Serial.flush();
     }
 }

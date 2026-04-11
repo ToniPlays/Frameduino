@@ -121,7 +121,7 @@ namespace Frameduino::HAL
             TCCR0B |= config.cs_bits; // set prescaler
 
             TIMSK0 |= BIT(OCIE0A); // enable interrupt
-            hal_logger_log_i(F_STR("Enabled timer interrupt 0", 25));
+            hal_logger_log_i(F_STR("Enabled timer interrupt 0", 25).c_str());
             return true;
         }
         case 2:
@@ -140,7 +140,7 @@ namespace Frameduino::HAL
             TCCR2B = config.cs_bits; // set prescaler
             TIMSK2 |= BIT(OCIE2A);   // enable interrupt
 
-            hal_logger_log_i(F_STR("Enabled timer interrupt 2", 25));
+            hal_logger_log_i(F_STR("Enabled timer interrupt 2", 25).c_str());
             return true;
         }
         case 1:
@@ -161,7 +161,7 @@ namespace Frameduino::HAL
             
             String str = String("Config: OCR1A=") + config.ocr_value + ", CS bits=" + config.cs_bits;
 
-            hal_logger_log_i(F_STR("Enabled timer interrupt 1", 25));
+            hal_logger_log_i(F_STR("Enabled timer interrupt 1", 25).c_str());
             return true;
         }
         }

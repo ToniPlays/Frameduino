@@ -9,9 +9,14 @@ namespace Frameduino
     inline static void hal_time_update(uint32_t micros)
     {
         micros = micros << hal_clock_prescaler();
-        
+        static uint16_t micros_count = 0;
+        micros_count += micros;
+
         system_info->micros += micros;
-        system_info->millis = system_info->micros / 1000.0f;
+        if(micros_count < 1000) return;
+
+        system_info->millis += micros_count / 1000;
+        micros_count = micros_count % 1000;
     }
 
     inline static uint64_t hal_millis()
