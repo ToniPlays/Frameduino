@@ -39,6 +39,7 @@ namespace Frameduino
         linked_list<hal_spi_device_t> devices;
         hal_pulse_t pulse_table[4];
         hal_logger_t *logger = nullptr;
+        void* user_data = nullptr;
         uint64_t millis = 0;
         uint64_t micros = 0;
     };
@@ -71,6 +72,20 @@ namespace Frameduino
     {
         if (!system_info)
             system_info = new hal_system_info_t();
+    }
+
+    inline void* hal_system_get_user_data()
+    {
+        if (!system_info)
+            return nullptr;
+        return system_info->user_data;
+    }
+
+    inline void hal_system_set_user_data(void* data)
+    {
+        if (!system_info)
+            system_info = new hal_system_info_t();
+        system_info->user_data = data;
     }
 
     inline void hal_system_tick()

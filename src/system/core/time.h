@@ -28,6 +28,21 @@ namespace Frameduino
     {
         return system_info->micros;
     }
+
+    inline static void hal_delay_millis(uint32_t ms)
+    {
+        uint64_t start = hal_millis();
+        while (hal_millis() - start < ms) {
+            asm volatile ("nop");
+        };
+    }
+    inline static void hal_delay_micros(uint32_t us)
+    {
+        uint64_t start = hal_micros();
+        while (hal_micros() - start < us) {
+            asm volatile ("nop");
+        };
+    }
 }
 
 #endif
