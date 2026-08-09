@@ -74,6 +74,11 @@ namespace Frameduino
         return true;
     }
 
+    inline bool hal_pin_read(pin_info_t *info)
+    {
+        return HAL::port_bit_read_input(info->port, info->mask);
+    }
+
     inline void hal_pin_write(pin_info_t *info, bool value)
     {
         HAL::port_bit_write(info->port, info->mask, value);

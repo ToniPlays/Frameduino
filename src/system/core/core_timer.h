@@ -2,6 +2,7 @@
 #define FRAMEDUINO_CORE_TIMER_H
 
 #include "core_timer.h"
+#include "time.h"
 
 namespace Frameduino
 {
