@@ -1,5 +1,6 @@
 #include "hal_system.h"
 #include "hardware/gpio/pin.h"
+#include "time.h"
 
 namespace Frameduino
 {
