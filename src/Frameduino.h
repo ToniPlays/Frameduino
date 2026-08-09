@@ -8,7 +8,7 @@
 #include "system/core/utility.h"
 
 #include "system/logging/default_logger.h"
-#include "system/system/timer.h"
+#include "system/core/core_timer.h"
 
 #include "system/memory/eeprom.h"
 
