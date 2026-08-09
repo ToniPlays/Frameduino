@@ -69,7 +69,6 @@ namespace Frameduino::HAL
         for (size_t i = 0; i < n; i++)
         {
             uint64_t ocr64 = ((uint64_t)F_CPU) / (prescalers[i] * (uint64_t)requested_freq) - 1;
-            
 
             if (ocr64 > limit)
                 continue; // Doesn't fit, try next prescaler

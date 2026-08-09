@@ -48,7 +48,7 @@ namespace Frameduino::HAL
         if (!system_info || !pin)
             return;
 
-        unsigned long now = millis();
+        unsigned long now = hal_millis();
         hal_logger_log_i(("Pulsing pin: " + String(pin->pin_number)).c_str());
         port_bit_write(pin->port, pin->mask, !end);
         for (int i = 0; i < 4; i++)
@@ -68,7 +68,7 @@ namespace Frameduino::HAL
 
         for (int i = 0; i < 4; i++)
         {
-            if (system_info->pulse_table[i].pin && millis() >= system_info->pulse_table[i].end_time)
+            if (system_info->pulse_table[i].pin && hal_millis() >= system_info->pulse_table[i].end_time)
             {
                 hal_pin_toggle(system_info->pulse_table[i].pin);
                 system_info->pulse_table[i].pin = nullptr;
