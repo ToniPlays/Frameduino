@@ -7,6 +7,10 @@
 #include "linked_list.h"
 #include <Arduino.h>
 
+#ifndef FRAMEDUINO_ENABLE_PULSES
+#define FRAMEDUINO_ENABLE_PULSES 0
+#endif
+
 namespace Frameduino
 {
     struct pin_info_t;
@@ -36,7 +40,9 @@ namespace Frameduino
     {
         linked_list<hal_system_interrupt_callback_t> interrupts;
         linked_list<hal_spi_device_t> devices;
-        hal_pulse_t pulse_table[4];
+        #if FRAMEDUINO_ENABLE_PULSES > 0
+        hal_pulse_t pulse_table[FRAMEDUINO_ENABLE_PULSES];
+        #endif
         hal_logger_t *logger = nullptr;
         void* user_data = nullptr;
         uint64_t millis = 0;

@@ -19,7 +19,6 @@ namespace Frameduino
             wire->beginTransmission(address);
             uint8_t error = wire->endTransmission();
             
-
             if (error == 0)
             {
                 char addr[64];

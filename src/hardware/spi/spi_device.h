@@ -44,6 +44,9 @@ namespace Frameduino
         pin_info_t pin = {};
         hal_pin_attach(cs, PIN_CONFIG_DIGITAL_OUTPUT, &pin);
         hal_pin_write(&pin, true);
+
+        SPI.begin();
+        
         device->set_cs_pin(&pin);
         device->init();
         
@@ -51,8 +54,6 @@ namespace Frameduino
         spi.pin = cs;
         spi.device = device;
         
-        SPI.begin();
-
         HAL::hal_get_system_info()->devices.add(spi);
         String csStr = String(cs);
         hal_logger_log_w(("Registered SPI device at pin " + csStr).c_str());

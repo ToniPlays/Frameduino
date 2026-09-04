@@ -29,9 +29,8 @@ namespace Frameduino::HAL
         if (!system_info || !pin)
             return false;
 
-        return system_info->interrupts.remove([](hal_system_interrupt_callback_t *m, void* pin) {
-             return m->pin == ((pin_info_t*)pin)->pin_number;
-        }, pin);
+        return system_info->interrupts.remove([](hal_system_interrupt_callback_t *m, void *pin)
+                                              { return m->pin == ((pin_info_t *)pin)->pin_number; }, pin);
     }
 
     void system_on_pin_interrupt(uint8_t reg, uint8_t pin)
@@ -39,20 +38,19 @@ namespace Frameduino::HAL
         if (!system_info)
             return;
 
-        system_info->interrupts.find([](hal_system_interrupt_callback_t *m, void* user_data) { 
-            return m->pin == *(uint8_t*)user_data; 
-        }, (void*)pin);
+        system_info->interrupts.find([](hal_system_interrupt_callback_t *m, void *user_data)
+                                     { return m->pin == *(uint8_t *)user_data; }, (void *)pin);
     }
 
+#if FRAMEDUINO_ENABLE_PULSES > 0
     void system_register_pulse_on_pin(pin_info_t *pin, uint32_t expiration, bool end)
     {
         if (!system_info || !pin)
             return;
 
         unsigned long now = hal_millis();
-        hal_logger_log_i(("Pulsing pin: " + String(pin->pin_number)).c_str());
         port_bit_write(pin->port, pin->mask, !end);
-        for (int i = 0; i < 4; i++)
+        for (int i = 0; i < FRAMEDUINO_ENABLE_PULSES; i++)
         {
             if (system_info->pulse_table[i].pin)
                 continue;
@@ -62,12 +60,13 @@ namespace Frameduino::HAL
             return;
         }
     }
+
     void system_pin_pulse_tick()
     {
         if (!system_info)
             return;
 
-        for (int i = 0; i < 4; i++)
+        for (int i = 0; i < FRAMEDUINO_ENABLE_PULSES; i++)
         {
             if (system_info->pulse_table[i].pin && hal_millis() >= system_info->pulse_table[i].end_time)
             {
@@ -76,4 +75,5 @@ namespace Frameduino::HAL
             }
         }
     }
+#endif
 }
