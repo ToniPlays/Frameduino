@@ -1,8 +1,7 @@
 #ifndef FRAMEDUINO_CORE_TIME_H
 #define FRAMEDUINO_CORE_TIME_H
 
-#include "hal_system.h"
-#include "energy.h"
+#include "system/core/hal_system.h"
 #include <Wire.h>
 
 namespace Frameduino

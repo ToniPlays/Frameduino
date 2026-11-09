@@ -1,6 +1,5 @@
 #include "hal_system.h"
 #include "hardware/gpio/pin.h"
-#include "time.h"
 
 namespace Frameduino
 {
@@ -68,7 +67,7 @@ namespace Frameduino::HAL
 
         for (int i = 0; i < FRAMEDUINO_ENABLE_PULSES; i++)
         {
-            if (system_info->pulse_table[i].pin && hal_millis() >= system_info->pulse_table[i].end_time)
+            if (system_info->pulse_table[i].pin && millis() >= system_info->pulse_table[i].end_time)
             {
                 hal_pin_toggle(system_info->pulse_table[i].pin);
                 system_info->pulse_table[i].pin = nullptr;

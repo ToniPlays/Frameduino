@@ -1,15 +1,18 @@
 #ifndef FRAMEDUINO_H
+
 #include "hardware/gpio/pin.h"
 #include "hardware/timer/timer.h"
 #include "hardware/spi/spi_device.h"
+#include "hardware/uart/hal_uart.h"
 
 #include "system/core/hal_system.h"
 #include "system/core/energy.h"
 #include "system/core/utility.h"
+#include "system/core/time.h"
 
 #include "system/logging/default_logger.h"
-#include "system/core/core_timer.h"
 
 #include "system/memory/eeprom.h"
+#include "system/memory/flash_string.h"
 
 #endif

@@ -5,6 +5,7 @@
 #include "../logging/default_logger.h"
 #include "boards/hal.h"
 #include "linked_list.h"
+#include "../memory/flash_string.h"
 #include <Arduino.h>
 
 #ifndef FRAMEDUINO_ENABLE_PULSES
@@ -66,7 +67,7 @@ namespace Frameduino
 
         inline hal_system_info_t *hal_get_system_info()
         {
-            if(!system_info) hal_logger_log_err_internal("Get nullptr system info");
+            if(!system_info) hal_logger_log_err_internal(F_STR("Get nullptr system info", 23).c_str());
             return system_info;
         }
     }
@@ -79,7 +80,7 @@ namespace Frameduino
             system_info = new hal_system_info_t();
     }
 
-     inline void* hal_system_get_user_data()
+    inline void* hal_system_get_user_data()
     {
         if (!system_info)
             return nullptr;
@@ -109,22 +110,43 @@ namespace Frameduino
         if (system_info->logger)
             system_info->logger->log_v(msg);
     }
+    inline void hal_logger_log_v_internal(const String& msg)
+    {
+        if (system_info->logger)
+            system_info->logger->log_v(msg.c_str());
+    }
     inline void hal_logger_log_i_internal(const char* msg)
     {
         if (system_info->logger)
             system_info->logger->log_i(msg);
+    }
+    inline void hal_logger_log_i_internal(const String& msg)
+    {
+        if (system_info->logger)
+            system_info->logger->log_i(msg.c_str());
     }
     inline void hal_logger_log_w_internal(const char* msg)
     {
         if (system_info->logger)
             system_info->logger->log_w(msg);
     }
+    inline void hal_logger_log_w_internal(const String& msg)
+    {
+        if (system_info->logger)
+            system_info->logger->log_w(msg.c_str());
+    }
+
     inline void hal_logger_log_err_internal(const char* msg)
     {
         if (system_info->logger)
             system_info->logger->log_err(msg);
     }
-
+    inline void hal_logger_log_err_internal(const String& msg)
+    {
+        if (system_info->logger)
+            system_info->logger->log_err(msg.c_str());
+    }
+    
 #ifdef FRAMEDUINO_DEBUG
     #define hal_logger_log_v(x) hal_logger_log_v_internal(x)
     #define hal_logger_log_i(x) hal_logger_log_i_internal(x)

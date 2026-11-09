@@ -10,9 +10,16 @@ namespace Frameduino
     {
     public:
         virtual void log_v(const char* msg) = 0;
+        virtual void log_v(const String& msg) = 0;
+
         virtual void log_i(const char* msg) = 0;
+        virtual void log_i(const String& msg) = 0;
+
         virtual void log_w(const char* msg) = 0;
+        virtual void log_w(const String& msg) = 0;
+        
         virtual void log_err(const char* msg) = 0;
+        virtual void log_err(const String& msg) = 0;
     };
     
 }
